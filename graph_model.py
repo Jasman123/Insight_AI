@@ -39,7 +39,7 @@ def retrieve_documents(state: State) -> State:
     return {"documents": docs}
 
 def re_rank_documents(state: State) -> State:
-    chat = create_chat()
+    chat = create_chat("gemini")
     documents = state["documents"]
     query = state["messages"][-1].content
 
@@ -74,7 +74,7 @@ def re_rank_documents(state: State) -> State:
 
 
 def generate_answer(state: State) -> State:
-    chat = create_chat()
+    chat = create_chat("gemini")
 
     documents = "\n\n".join(state["documents"])
     question = state["messages"][-1].content
