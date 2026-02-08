@@ -40,6 +40,11 @@ def initialize_pinecone_vector_store(index_name, embeddings):
     index = pc.Index(index_name)
     return PineconeVectorStore(index=index, embedding=embeddings)
 
+def create_pinecone_vector_store(index_name, embeddings):
+    pc = Pinecone(api_key=PINECONE_API_KEY, environment=PINECONE_ENVIRONMENT)
+    index = pc.Index(index_name)
+    return PineconeVectorStore(index=index, embedding=embeddings)
+
 
 def embed_documents_to_pinecone(vector_store, documents, category="default"):
     uuids = [str(uuid4()) for _ in documents]
@@ -47,12 +52,13 @@ def embed_documents_to_pinecone(vector_store, documents, category="default"):
     print(f"Embedded {len(documents)} documents into Pinecone index '{index_name}' with category '{category}'.")
 
 
-documents = load_pdf("documents/big_data_analytics.pdf")
-print(f"Loaded {len(documents)} documents from PDF.")
-vector_store = initialize_pinecone_vector_store(index_name, embeddings)
-print("Initialized Pinecone vector store.")
-embed_documents_to_pinecone(vector_store, documents)
-print("Embedding process completed.")
+
+# documents = load_pdf("documents/big_data_analytics.pdf")
+# print(f"Loaded {len(documents)} documents from PDF.")
+# vector_store = initialize_pinecone_vector_store(index_name, embeddings)
+# print("Initialized Pinecone vector store.")
+# embed_documents_to_pinecone(vector_store, documents)
+# print("Embedding process completed.")
 
 # print(documents)
 

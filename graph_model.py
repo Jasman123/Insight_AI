@@ -3,9 +3,14 @@ from langgraph.graph import StateGraph, START, END, MessagesState
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_core.prompts import PromptTemplate
 from langgraph.checkpoint.memory import MemorySaver
-
+#Chroma Vector Store
 from build_vectore import get_vector_store
 from retriever import create_retriever
+#Pinecone Vector Store
+from build_vectore_pinecone import create_pinecone_vector_store
+from retriever import create_retriever_pinecone
+
+
 from llm import create_chat
 
 
@@ -17,8 +22,13 @@ def retrieve_documents(state: State) -> State:
     embeddings = GoogleGenerativeAIEmbeddings(
         model="models/gemini-embedding-001"
     )
-    vector_store = get_vector_store(embeddings)
-    retriever = create_retriever(vector_store)
+    #Chroma Vector Store
+    # vector_store = get_vector_store(embeddings)
+    # retriever = create_retriever(vector_store)
+
+    #Pinecone Vector Store
+    vector_store = create_pinecone_vector_store("langchain-test-index", embeddings)
+    retriever = create_retriever_pinecone(vector_store, k=3, score_threshold=0.4)
 
     query = state["messages"][-1].content
     docs = retriever.invoke(query)
