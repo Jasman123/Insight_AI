@@ -12,7 +12,7 @@ LOG_DIR = "logs"
 os.makedirs(LOG_DIR, exist_ok=True)
 
 logging.basicConfig(
-    filename=os.path.join(LOG_DIR, "error_log.txt"),
+    filename=os.path.join(LOG_DIR, f"error_{datetime.now().strftime('%Y-%m-%d')}.txt"),
     level=logging.ERROR,
     format="%(asctime)s | %(levelname)s | %(message)s",
 )
