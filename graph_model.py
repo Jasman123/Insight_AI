@@ -82,6 +82,9 @@ def generate_answer(state: State) -> State:
     formatted_docs = []
     for i, doc in enumerate(documents, start=1):
         source = doc.metadata.get("source", "Unknown Source")
+        title = doc.metadata.get("title", "Untitled")
+        page = doc.metadata.get("page", "N/A")
+        # print( f"Document {i} source: {source}, title: {title}" )
         formatted_docs.append(
             f"[{i}] Source: {source}\n{doc.page_content}"
         )
@@ -97,10 +100,12 @@ Documents:
 Question:
 {question}
 
-Rules:
+Rules:  
 - Cite sources using footnotes like [1], [2]
 - Each factual sentence MUST have a footnote
-- If the answer is not present, say:
+- In last, provide a list of sources used based on footnotes
+- Keep the answer concise and to the point
+- If the answer is not present, say:DDD
   "I don't find the answer in the provided documents."
 """
 
