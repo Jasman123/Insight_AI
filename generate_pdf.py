@@ -18,9 +18,14 @@ def load_pdf(file_path: str) -> list:
 
 
 if __name__ == "__main__":
-    file_path = "AI_EPIC\\documents\\Big data analytics—A review of data-mining models for small.pdf" 
+    file_path = "documents/big_data_analytics.pdf"
     pages = load_pdf(file_path)
     print(f"Total pages after splitting: {len(pages)}")
+
+    for i, doc in enumerate(pages[:3]):
+        print(f"\n--- Chunk {i} ---")
+        print("Metadata:", doc.metadata)
+    
     # for i, page in enumerate(pages):
     #     print(f"Page {i+1}:\n{page.page_content}\n")
     

@@ -68,41 +68,48 @@ def re_rank_documents(state: State) -> State:
 
     top_documents = [documents[i] for i in ranked_indices[:5]]
 
-    document_pages = [doc.page_content for doc in top_documents]
+    # document_pages = [doc.page_content for doc in top_documents]
 
-    return {"documents": document_pages}
+    return {"documents": top_documents}
 
 
 def generate_answer(state: State) -> State:
     chat = create_chat("gemini")
-
-    documents = "\n\n".join(state["documents"])
+    documents = state["documents"]
     question = state["messages"][-1].content
 
-    prompt_template = PromptTemplate(
-        input_variables=["documents", "question"],
-        template="""
-Use ONLY the following documents to answer the question.
+    # Build citation-aware context
+    formatted_docs = []
+    for i, doc in enumerate(documents, start=1):
+        source = doc.metadata.get("source", "Unknown Source")
+        formatted_docs.append(
+            f"[{i}] Source: {source}\n{doc.page_content}"
+        )
+
+    context = "\n\n".join(formatted_docs)
+
+    prompt = f"""
+Use ONLY the documents below to answer the question.
 
 Documents:
-{documents}
+{context}
 
 Question:
 {question}
 
-If the answer is not found in the documents, respond with:
-"I don't know."
+Rules:
+- Cite sources using footnotes like [1], [2]
+- Each factual sentence MUST have a footnote
+- If the answer is not present, say:
+  "I don't find the answer in the provided documents."
 """
-    )
-
-    prompt = prompt_template.format(
-        documents=documents,
-        question=question
-    )
 
     response = chat.invoke(prompt)
 
-    return {"messages": state['messages'] + [response]}
+    return {
+        "messages": state["messages"] + [response]
+    }
+
 
 
 def build_graph():

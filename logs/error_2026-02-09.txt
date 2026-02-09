@@ -1,0 +1,60 @@
+2026-02-09 12:25:28,317 | ERROR | Thread ID: a5791774-9766-47e6-9d35-252610f89442 | Error: 'str' object has no attribute 'metadata'
+Traceback (most recent call last):
+  File "C:\Users\COB\Documents\python project\Insight_AI\app.py", line 68, in <module>
+    result = invoke_with_timeout(
+        graph=graph,
+    ...<2 lines>...
+        timeout=REQUEST_TIMEOUT_SECONDS
+    )
+  File "C:\Users\COB\Documents\python project\Insight_AI\app.py", line 52, in invoke_with_timeout
+    return future.result(timeout=timeout)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\COB\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\_base.py", line 456, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\COB\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\_base.py", line 401, in __get_result
+    raise self._exception
+  File "C:\Users\COB\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "c:\Users\COB\Documents\python project\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3071, in invoke
+    for chunk in self.stream(
+                 ~~~~~~~~~~~^
+        input,
+        ^^^^^^
+    ...<10 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ):
+    ^
+  File "c:\Users\COB\Documents\python project\.venv\Lib\site-packages\langgraph\pregel\main.py", line 2646, in stream
+    for _ in runner.tick(
+             ~~~~~~~~~~~^
+        [t for t in loop.tasks.values() if not t.writes],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        schedule_task=loop.accept_push,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "c:\Users\COB\Documents\python project\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 167, in tick
+    run_with_retry(
+    ~~~~~~~~~~~~~~^
+        t,
+        ^^
+    ...<10 lines>...
+        },
+        ^^
+    )
+    ^
+  File "c:\Users\COB\Documents\python project\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 42, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\COB\Documents\python project\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+  File "c:\Users\COB\Documents\python project\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+  File "C:\Users\COB\Documents\python project\Insight_AI\graph_model.py", line 84, in generate_answer
+    source = doc.metadata.get("source", "Unknown Source")
+             ^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'metadata'
+During task with name 'generate_answer' and id '5e31818f-c6e5-65d5-01b8-70474bee0432'
