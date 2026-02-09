@@ -8,6 +8,10 @@ from gtts import gTTS
 import logging
 from datetime import datetime
 
+import concurrent.futures
+import time
+
+REQUEST_TIMEOUT_SECONDS = 60
 LOG_DIR = "logs"
 os.makedirs(LOG_DIR, exist_ok=True)
 
@@ -40,6 +44,17 @@ for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
+
+def invoke_with_timeout(graph, payload, config, timeout=30):
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(graph.invoke, payload, config)
+        try:
+            return future.result(timeout=timeout)
+        except concurrent.futures.TimeoutError:
+            raise TimeoutError("LLM request timed out")
+
+
+
 error_message = {}
 try:
     user_input = st.chat_input("Ask something about the PDF...")
@@ -50,10 +65,13 @@ try:
             st.markdown(user_input)
 
         with st.spinner("Thinking..."):
-            result = graph.invoke(
-                {"messages": st.session_state.messages},
-                config={"configurable": {"thread_id": st.session_state.thread_id}}
+            result = invoke_with_timeout(
+                graph=graph,
+                payload={"messages": st.session_state.messages},
+                config={"configurable": {"thread_id": st.session_state.thread_id}},
+                timeout=REQUEST_TIMEOUT_SECONDS
             )
+
 
             assistant_reply = result["messages"][-1].content
 
@@ -69,9 +87,15 @@ try:
             with open(audio_path, "rb") as audio_file:
                 st.audio(audio_file.read(), format="audio/mp3")
             os.remove(audio_path)
+
+except TimeoutError as e:
+    st.error("⏱️ Request timed out. The model took too long to respond. Please try again.")
+    logging.error(
+        f"Thread ID: {st.session_state.get('thread_id')} | TIMEOUT | {str(e)}"
+    )
     
 except Exception as e:
-    st.error(f"An error occurred: please try again later.")
+    st.error(f"An error occurred: please try again later or LLMs models.")
     error_text = str(e)
     logging.error(
         f"Thread ID: {st.session_state.get('thread_id')} | Error: {error_text}",

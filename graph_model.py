@@ -119,3 +119,10 @@ def build_graph():
 
     memory = MemorySaver()
     return graph.compile(checkpointer=memory)
+
+if __name__ == "__main__":
+    graph = build_graph()
+    mermaid = graph.get_graph().draw_mermaid()
+    print(mermaid)
+
+
